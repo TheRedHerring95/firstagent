@@ -16,6 +16,7 @@ client = OpenAI(
 # Get user prompt, maybe
 parser = argparse.ArgumentParser(description="Chatbot")
 parser.add_argument("user_prompt", type=str, help="User prompt")
+parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
 messages=[
@@ -37,9 +38,11 @@ else:
 
 
 def main():
+    if args.verbose==True:
+        print(f"User prompt: {args.user_prompt}")
+        print(f"Prompt tokens: {prompt_tokens}")
+        print(f"Response tokens: {completion_tokens}")
     print(response.choices[0].message.content)
-    print(f"Prompt tokens: {prompt_tokens}")
-    print(f"Response tokens: {completion_tokens}")
 
 
 if __name__ == "__main__":
