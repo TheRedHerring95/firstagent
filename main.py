@@ -2,6 +2,7 @@ import os
 import argparse
 import json
 from functions.get_files_info import *
+from call_function import call_function
 from config import system_prompt
 from call_function import available_functions
 from dotenv import load_dotenv
@@ -47,7 +48,12 @@ def main():
     if message.tool_calls != None:
         for tool_call in message.tool_calls:
             function_args = json.loads(tool_call.function.arguments or "{}")
-            print(f"Calling function: {tool_call.function.name}({function_args})")
+            result = call_function(tool_call, args.verbose)
+            if result["content"] == None or "":
+                raise Exception("Error: No tool content")
+            if args.verbose == True:
+                print(f'-> {result["content"]}')
+            #print(f"Calling function: {tool_call.function.name}({function_args})")
     if args.verbose==True:
         print(f"User prompt: {args.user_prompt}")
         print(f"Model: {response.model}")
