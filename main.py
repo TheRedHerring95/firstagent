@@ -1,5 +1,6 @@
 import os
 import argparse
+from config import system_prompt
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -20,14 +21,14 @@ parser.add_argument("--verbose", action="store_true", help="Enable verbose outpu
 args = parser.parse_args()
 
 messages=[
-    {
-        "role": "user","content": args.user_prompt,
-    }
+        {"role": "system", "content": system_prompt},
+        {"role": "user","content": args.user_prompt},
 ]
 
 response = client.chat.completions.create(
     model="openrouter/free",
-    messages=messages
+    messages=messages,
+    temperature=0
 )
 
 if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
@@ -40,6 +41,7 @@ else:
 def main():
     if args.verbose==True:
         print(f"User prompt: {args.user_prompt}")
+        print(f"Model: {response.model}")
         print(f"Prompt tokens: {prompt_tokens}")
         print(f"Response tokens: {completion_tokens}")
     print(response.choices[0].message.content)
