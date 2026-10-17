@@ -1,6 +1,23 @@
 import os
 from config import MAX_CHARS_READ
 
+schema_get_file_content = {
+    "type": "function",
+    "function": {
+        "name": "get_file_content",
+        "description": "Reads the content of a file path relative to the working directory, providing contents contained",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "File path for the file to be read, there is no default so a file must be provided",
+                },
+            },
+        },
+    },
+}
+
 def get_file_content(working_directory, file_path):
     try:
         working_dir_abs = os.path.abspath(working_directory)
