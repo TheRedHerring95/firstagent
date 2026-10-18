@@ -29,37 +29,50 @@ messages=[
         {"role": "user","content": args.user_prompt},
 ]
 
-response = client.chat.completions.create(
-    model="openrouter/free",
-    messages=messages,
-    tools=available_functions,
-    temperature=0
-)
-
-if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
-    raise RuntimeError("Possibly incomplete response.")
-else:
-    prompt_tokens = response.usage.prompt_tokens
-    completion_tokens = response.usage.completion_tokens
-
+def call_AI(messages):
+    response = client.chat.completions.create(
+        model="openrouter/free",
+        messages=messages,
+        tools=available_functions,
+        temperature=0
+    )
+    if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
+        raise RuntimeError("Possibly incomplete response.")
+    else:
+        prompt_tokens = response.usage.prompt_tokens
+        completion_tokens = response.usage.completion_tokens
+    return response
 
 def main():
-    message = response.choices[0].message
-    if message.tool_calls != None:
-        for tool_call in message.tool_calls:
-            function_args = json.loads(tool_call.function.arguments or "{}")
-            result = call_function(tool_call, args.verbose)
-            if result["content"] == None or "":
-                raise Exception("Error: No tool content")
-            if args.verbose == True:
-                print(f'-> {result["content"]}')
-            #print(f"Calling function: {tool_call.function.name}({function_args})")
-    if args.verbose==True:
-        print(f"User prompt: {args.user_prompt}")
-        print(f"Model: {response.model}")
-        print(f"Prompt tokens: {prompt_tokens}")
-        print(f"Response tokens: {completion_tokens}")
-    print(message.content)
+    for i in range(0,20):
+        response = call_AI(messages)
+        message = response.choices[0].message
+        prompt_tokens = response.usage.prompt_tokens
+        completion_tokens = response.usage.completion_tokens
+        messages.append(message)
+        if message.tool_calls != None:
+            for tool_call in message.tool_calls:
+                function_args = json.loads(tool_call.function.arguments or "{}")
+                result = call_function(tool_call, args.verbose)
+                messages.append(result)
+                if result["content"] == None or "":
+                    raise Exception("Error: No tool content")
+                if args.verbose == True:
+                    print(f'-> {result["content"]}')
+            print(f"Calling function: {tool_call.function.name}({function_args})")
+        else:
+            #messages.append(message)
+            if args.verbose==True:
+                print(f"User prompt: {args.user_prompt}")
+                print(f"Model: {response.model}")
+                print(f"Prompt tokens: {prompt_tokens}")
+                print(f"Response tokens: {completion_tokens}")
+            print(message.content)
+            break
+        if i == 19:
+            print(f"Out of calls")
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
