@@ -14,8 +14,8 @@ if api_key is None:
     raise RuntimeError("No API key found.")
 
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=api_key,
+    base_url="http://127.0.0.1:1235/v1",
+    api_key="LocallyHosted",
 )
 
 # Get user prompt, maybe
@@ -29,13 +29,22 @@ messages=[
         {"role": "user","content": args.user_prompt},
 ]
 
-def call_AI(messages):
-    response = client.chat.completions.create(
-        model="openrouter/free",
-        messages=messages,
-        tools=available_functions,
-        temperature=0
-    )
+def call_AI(messages, num: int):
+    if num == 19:
+        response = client.chat.completions.create(
+            model="qwen/qwen3-coder-next",
+            messages=messages,
+            tools=available_functions,
+            temperature=0,
+            tool_choice="none"
+        )
+    else:
+        response = client.chat.completions.create(
+            model="qwen/qwen3-coder-next",
+            messages=messages,
+            tools=available_functions,
+            temperature=0
+        )
     if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
         raise RuntimeError("Possibly incomplete response.")
     else:
@@ -45,7 +54,7 @@ def call_AI(messages):
 
 def main():
     for i in range(0,20):
-        response = call_AI(messages)
+        response = call_AI(messages, i)
         message = response.choices[0].message
         prompt_tokens = response.usage.prompt_tokens
         completion_tokens = response.usage.completion_tokens
@@ -59,7 +68,7 @@ def main():
                     raise Exception("Error: No tool content")
                 if args.verbose == True:
                     print(f'-> {result["content"]}')
-            print(f"Calling function: {tool_call.function.name}({function_args})")
+                print(f"Calling function: {tool_call.function.name}({function_args})")
         else:
             #messages.append(message)
             if args.verbose==True:
