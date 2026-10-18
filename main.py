@@ -14,7 +14,7 @@ if api_key is None:
     raise RuntimeError("No API key found.")
 
 client = OpenAI(
-    base_url="http://127.0.0.1:1235/v1",
+    base_url="http://127.0.0.1:11434/v1",
     api_key="LocallyHosted",
 )
 
@@ -32,7 +32,7 @@ messages=[
 def call_AI(messages, num: int):
     if num == 19:
         response = client.chat.completions.create(
-            model="qwen/qwen3-coder-next",
+            model="gemma4:12b",
             messages=messages,
             tools=available_functions,
             temperature=0,
@@ -40,7 +40,7 @@ def call_AI(messages, num: int):
         )
     else:
         response = client.chat.completions.create(
-            model="qwen/qwen3-coder-next",
+            model="gemma4:12b",
             messages=messages,
             tools=available_functions,
             temperature=0
@@ -54,6 +54,7 @@ def call_AI(messages, num: int):
 
 def main():
     for i in range(0,20):
+        print(i)
         response = call_AI(messages, i)
         message = response.choices[0].message
         prompt_tokens = response.usage.prompt_tokens
