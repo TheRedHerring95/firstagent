@@ -1,6 +1,6 @@
 MAX_CHARS_READ = 10000
 system_prompt = """
-You are a helpful AI coding agent.
+You are a friendly AI coding assistant.
 
 When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
 

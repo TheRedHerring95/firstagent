@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+from local import MODEL
 from functions.get_files_info import *
 from call_function import call_function
 from config import system_prompt
@@ -35,7 +36,7 @@ def call_AI(messages, num: int):
             model="MODEL",
             messages=messages,
             tools=available_functions,
-            temperature=0,
+            temperature=0.3,
             tool_choice="none"
         )
     else:
@@ -43,7 +44,7 @@ def call_AI(messages, num: int):
             model="MODEL",
             messages=messages,
             tools=available_functions,
-            temperature=0
+            temperature=0.3
         )
     if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
         raise RuntimeError("Possibly incomplete response.")
