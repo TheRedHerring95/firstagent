@@ -32,7 +32,7 @@ messages=[
 def call_AI(messages, num: int):
     if num == 19:
         response = client.chat.completions.create(
-            model="gemma4:12b",
+            model="qwen3.5:4b",
             messages=messages,
             tools=available_functions,
             temperature=0,
@@ -40,7 +40,7 @@ def call_AI(messages, num: int):
         )
     else:
         response = client.chat.completions.create(
-            model="gemma4:12b",
+            model="qwen3.5:4b",
             messages=messages,
             tools=available_functions,
             temperature=0
