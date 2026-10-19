@@ -29,7 +29,7 @@ def call_function(tool_call, verbose: bool = False) -> dict:
             "content": f"Error: Unknown function: {function_name}"
         }
     else:
-        function_args["working_directory"] = "./calculator"
+        function_args["working_directory"] = "../"
         result = function_map[function_name](**function_args)
         return {
             "role": "tool",
