@@ -1,6 +1,7 @@
 import os
 import argparse
 import json
+from local import MODEL
 from functions.get_files_info import *
 from call_function import call_function
 from config import system_prompt
@@ -32,7 +33,7 @@ messages=[
 def call_AI(messages, num: int):
     if num == 19:
         response = client.chat.completions.create(
-            model="gemma4:12b",
+            model="MODEL",
             messages=messages,
             tools=available_functions,
             temperature=0.3,
@@ -40,7 +41,7 @@ def call_AI(messages, num: int):
         )
     else:
         response = client.chat.completions.create(
-            model="gemma4:12b",
+            model="MODEL",
             messages=messages,
             tools=available_functions,
             temperature=0.3
