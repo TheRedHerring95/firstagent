@@ -9,10 +9,10 @@ from call_function import available_functions
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv()
-api_key = os.environ.get("OPENROUTER_API_KEY")
-if api_key is None:
-    raise RuntimeError("No API key found.")
+#load_dotenv()
+#api_key = os.environ.get("OPENROUTER_API_KEY")
+#if api_key is None:
+#    raise RuntimeError("No API key found.")
 
 client = OpenAI(
     base_url="http://127.0.0.1:11434/v1",
@@ -55,17 +55,13 @@ def call_AI(messages, num: int):
     return response
 
 def main():
-    project = ""
-    user_prompt = ""
     if args.project == None:
-        project = input("What project would you like to work on?\n")
-    else: project = args.project
+        args.project = input("What project would you like to work on?\n")
     if args.user_prompt == None:
-        user_prompt = input("What would you like help with?\n")
-    else: user_prompt = args.user_prompt
+        args.user_prompt = input("What would you like help with?\n")
     messages=[
         {"role": "system", "content": system_prompt},
-        {"role": "user","content": user_prompt},
+        {"role": "user","content": args.user_prompt},
 ]
     for i in range(0,20):
         print(i)
@@ -77,7 +73,7 @@ def main():
         if message.tool_calls != None:
             for tool_call in message.tool_calls:
                 function_args = json.loads(tool_call.function.arguments or "{}")
-                result = call_function(tool_call, args.verbose, project)
+                result = call_function(tool_call, args.verbose, args.project)
                 messages.append(result)
                 if result["content"] == None or "":
                     raise Exception("Error: No tool content")

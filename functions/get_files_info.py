@@ -44,8 +44,7 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
                     is_dir = True
                 size = os.path.getsize(target_dir+"/"+item)
                 item_list.append(f"  - {item}: file_size={size}, is_dir={is_dir}")
-            for item in item_list:
-                items_string = "\n".join(item_list)
+            items_string = "\n".join(item_list)
             return f"{pre}\n{items_string}"
     except Exception as e:
         return f"Error: {e}"
