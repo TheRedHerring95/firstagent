@@ -19,9 +19,10 @@ client = OpenAI(
     api_key="LocallyHosted",
 )
 
-# Get user prompt, maybe
+# Get if verbose, maybe
 parser = argparse.ArgumentParser(description="Chatbot")
-parser.add_argument("user_prompt", type=str, help="User prompt")
+parser.add_argument("project", nargs='?', type=str, help="Project directory")
+parser.add_argument("user_prompt", nargs='?', type=str, help="User prompt")
 parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
@@ -31,15 +32,20 @@ def call_AI(messages, num: int):
             model=MODEL,
             messages=messages,
             tools=available_functions,
-            temperature=0.3,
-            tool_choice="none"
+            #temperature=0.3,
+            tool_choice="none",
+            #stream=True
         )
     else:
         response = client.chat.completions.create(
             model=MODEL,
             messages=messages,
             tools=available_functions,
-            temperature=0.3
+            #temperature=0.3,
+            #stream=True,
+            #stream_options={
+            #    include_usage=True
+            #}
         )
     if response.usage.prompt_tokens is None or response.usage.completion_tokens is None:
         raise RuntimeError("Possibly incomplete response.")
@@ -49,9 +55,17 @@ def call_AI(messages, num: int):
     return response
 
 def main():
+    project = ""
+    user_prompt = ""
+    if args.project == None:
+        project = input("What project would you like to work on?\n")
+    else: project = args.project
+    if args.user_prompt == None:
+        user_prompt = input("What would you like help with?\n")
+    else: user_prompt = args.user_prompt
     messages=[
         {"role": "system", "content": system_prompt},
-        {"role": "user","content": args.user_prompt},
+        {"role": "user","content": user_prompt},
 ]
     for i in range(0,20):
         print(i)
@@ -63,7 +77,7 @@ def main():
         if message.tool_calls != None:
             for tool_call in message.tool_calls:
                 function_args = json.loads(tool_call.function.arguments or "{}")
-                result = call_function(tool_call, args.verbose)
+                result = call_function(tool_call, args.verbose, project)
                 messages.append(result)
                 if result["content"] == None or "":
                     raise Exception("Error: No tool content")
