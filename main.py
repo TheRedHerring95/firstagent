@@ -25,15 +25,10 @@ parser.add_argument("user_prompt", type=str, help="User prompt")
 parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
 args = parser.parse_args()
 
-messages=[
-        {"role": "system", "content": system_prompt},
-        {"role": "user","content": args.user_prompt},
-]
-
 def call_AI(messages, num: int):
     if num == 19:
         response = client.chat.completions.create(
-            model="MODEL",
+            model=MODEL,
             messages=messages,
             tools=available_functions,
             temperature=0.3,
@@ -41,7 +36,7 @@ def call_AI(messages, num: int):
         )
     else:
         response = client.chat.completions.create(
-            model="MODEL",
+            model=MODEL,
             messages=messages,
             tools=available_functions,
             temperature=0.3
@@ -54,6 +49,10 @@ def call_AI(messages, num: int):
     return response
 
 def main():
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user","content": args.user_prompt},
+]
     for i in range(0,20):
         print(i)
         response = call_AI(messages, i)
