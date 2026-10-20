@@ -11,7 +11,7 @@ Custom built based on the results of building the agent in Boot.dev, this agent 
 - Running on my local hardware using Ollama endpoint.
 
 ## Not included:
-As I run different configuragtions for this, is local.py. That has a single variable called MODEL, which is where the selected backend model is selected; Gemma4:12b on my main system, Qwen3.5:4b on my laptop.
+As I run different configurations for this, is local.py. That has a single variable called MODEL, which is where the selected backend model is selected; Gemma4:12b on my main system, Qwen3.5:4b on my laptop. These seem to give a good balance of being able to run tools and provide the intended style of output, while running at a fast or moderate speed for the hardware I'm using. 
 
 # DISCLAIMER:
 ## This is still being regularly updated, and is primarily intended solely for my own usage. As a basic agent, it does not have all the security and safety considerations found in common agents. Do not expect the most polished behaviour out of this project, as it is for my own personal education (both the building itself and its usage) and not for production!
