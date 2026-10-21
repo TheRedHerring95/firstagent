@@ -81,18 +81,18 @@ def agent_loop(messages, project, user_prompt, verbose):
                 print(f"Response tokens: {completion_tokens}")
             print(message.content)
             new_prompt = input("Any other questions?\n")
-            if new_prompt == "exit":
+            if new_prompt.lower() == "exit" or new_prompt.lower() == "quit":
                 return 0
             else: 
                 message = {"role": "user", "content": new_prompt}
                 messages.append(message)
                 status = agent_loop(messages, project, new_prompt, verbose)
                 return status
-        if i == 19:
-            print(f"Out of calls")
-            return 1
-        else: 
-            return 0
+#        if i == 19:
+#            print(f"Out of calls")
+#            return 1
+#        else: 
+#            return 0
 
 def main():
     if args.project == None:
