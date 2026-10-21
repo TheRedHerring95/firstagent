@@ -54,7 +54,7 @@ def call_AI(messages, num: int):
         completion_tokens = response.usage.completion_tokens
     return response
 
-def agent_loop(messages, project, user_prompt):
+def agent_loop(messages, project, user_prompt, verbose):
     for i in range(0,20):
         print(i+1)
         response = call_AI(messages, i)
@@ -65,7 +65,7 @@ def agent_loop(messages, project, user_prompt):
         if message.tool_calls != None:
             for tool_call in message.tool_calls:
                 function_args = json.loads(tool_call.function.arguments or "{}")
-                result = call_function(tool_call, args.verbose, args.project)
+                result = call_function(tool_call, verbose, project)
                 messages.append(result)
                 if result["content"] == None or "":
                     raise Exception("Error: No tool content")
@@ -74,7 +74,7 @@ def agent_loop(messages, project, user_prompt):
                 print(f"Calling function: {tool_call.function.name}({function_args})")
         else:
             #messages.append(message)
-            if args.verbose==True:
+            if verbose==True:
                 print(f"User prompt: {user_prompt}")
                 print(f"Model: {response.model}")
                 print(f"Prompt tokens: {prompt_tokens}")
@@ -84,16 +84,15 @@ def agent_loop(messages, project, user_prompt):
             if new_prompt == "exit":
                 return 0
             else: 
-                messages.append({"role": "user", "content": new_prompt})
-                status = agent_loop(messages, project, new_prompt)
-                #continue
+                message = {"role": "user", "content": new_prompt}
+                messages.append(message)
+                status = agent_loop(messages, project, new_prompt, verbose)
                 return status
-            #break
-#        if i == 19:
-#            print(f"Out of calls")
-#            return 1
-#        else: 
-#            return 0
+        if i == 19:
+            print(f"Out of calls")
+            return 1
+        else: 
+            return 0
 
 def main():
     if args.project == None:
@@ -105,7 +104,7 @@ def main():
         {"role": "user","content": args.user_prompt},
     ]
     
-    status = agent_loop(messages, args.project, args.user_prompt)
+    status = agent_loop(messages, args.project, args.user_prompt, args.verbose)
     return status
 
 
