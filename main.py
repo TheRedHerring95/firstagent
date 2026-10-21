@@ -54,9 +54,9 @@ def call_AI(messages, num: int):
         completion_tokens = response.usage.completion_tokens
     return response
 
-def agent_loop(messages, project):
+def agent_loop(messages, project, user_prompt):
     for i in range(0,20):
-        print(i)
+        print(i+1)
         response = call_AI(messages, i)
         message = response.choices[0].message
         prompt_tokens = response.usage.prompt_tokens
@@ -75,20 +75,25 @@ def agent_loop(messages, project):
         else:
             #messages.append(message)
             if args.verbose==True:
-                print(f"User prompt: {args.user_prompt}")
+                print(f"User prompt: {user_prompt}")
                 print(f"Model: {response.model}")
                 print(f"Prompt tokens: {prompt_tokens}")
                 print(f"Response tokens: {completion_tokens}")
             print(message.content)
-            break
-        if i == 19:
-            print(f"Out of calls")
-            return 1
-        else: 
-            new_prompt = input("Any other questions?")
+            new_prompt = input("Any other questions?\n")
             if new_prompt == "exit":
                 return 0
-            else: call_AI(messages, project)
+            else: 
+                messages.append({"role": "user", "content": new_prompt})
+                status = agent_loop(messages, project, new_prompt)
+                #continue
+                return status
+            #break
+#        if i == 19:
+#            print(f"Out of calls")
+#            return 1
+#        else: 
+#            return 0
 
 def main():
     if args.project == None:
@@ -100,7 +105,7 @@ def main():
         {"role": "user","content": args.user_prompt},
     ]
     
-    status = agent_loop(messages, args.project)
+    status = agent_loop(messages, args.project, args.user_prompt)
     return status
 
 

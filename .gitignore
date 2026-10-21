@@ -14,3 +14,4 @@ wheels/
 
 # Local config
 local.py
+multi_shot.py
