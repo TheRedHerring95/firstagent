@@ -54,15 +54,7 @@ def call_AI(messages, num: int):
         completion_tokens = response.usage.completion_tokens
     return response
 
-def main():
-    if args.project == None:
-        args.project = input("What project would you like to work on?\n")
-    if args.user_prompt == None:
-        args.user_prompt = input("What would you like help with?\n")
-    messages=[
-        {"role": "system", "content": system_prompt},
-        {"role": "user","content": args.user_prompt},
-]
+def agent_loop(messages, project):
     for i in range(0,20):
         print(i)
         response = call_AI(messages, i)
@@ -92,7 +84,24 @@ def main():
         if i == 19:
             print(f"Out of calls")
             return 1
-    return 0
+        else: 
+            new_prompt = input("Any other questions?")
+            if new_prompt == "exit":
+                return 0
+            else: call_AI(messages, project)
+
+def main():
+    if args.project == None:
+        args.project = input("What project would you like to work on?\n")
+    if args.user_prompt == None:
+        args.user_prompt = input("What would you like help with?\n")
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user","content": args.user_prompt},
+    ]
+    
+    status = agent_loop(messages, args.project)
+    return status
 
 
 if __name__ == "__main__":
